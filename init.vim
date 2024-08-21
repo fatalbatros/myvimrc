@@ -21,8 +21,9 @@ noremap <silent> <C-Down> :resize +3<CR>
 
 
 "-------------------------------- INTEGRACION CON PYTHON -----------
-set path =,,C:/Users/JoelA/AppData/Local/Programs/Python/Python312/**
-let g:python3_host_prog = 'C:/Users/JoelA/AppData/Local/Programs/Python/Python312/python.exe'
+set path =,,C:\Users\joel\AppData\Local\Programs\Python\Python311\**
+let g:python3_host_prog = 'C:\Users\joel\AppData\Local\Programs\Python\Python311\python.exe'
+
 
 tmap <Esc> <C-\><C-n>
 nnoremap <silent> <leader>tp :call AbrirTerminal()<CR>
@@ -44,29 +45,26 @@ set showcmdloc=statusline
 set statusline=%(%#LineNr#cmd\ %S%)%=%=%15(%l\ [%L]\ %p%%%)
 "--------------------PLUGINS-------------------------------------------
 call plug#begin()
-"Plug 'morhetz/gruvbox'
 Plug 'rebelot/kanagawa.nvim'
+"Plug 'kvrohit/rasmus.nvim'
 call plug#end()
 "---------------------------------------------------------------------
 
 "------------------- COLORES------------------------------------------
-"let g:gruvbox_contrast_dark = 'hard'
-"let g:gruvbox_invert_selection=0
 colorscheme kanagawa-wave
+"colorscheme rasmus
 highlight! link SignColumn NonText
 highlight! link LineNr NonText
 
-nnoremap <A-j> :m+1<CR>==
-nnoremap <A-k> :m-2<CR>==
-inoremap <A-j> <Esc>:m+1<CR>==gi
-inoremap <A-k> <Esc>:m-2<CR>==gi
-vnoremap <A-j> :m'>+1<CR>gv=gv
-vnoremap <A-k> :m-2<CR>gv=gv
+nnoremap <silent> <A-j> :<C-U>execute 'm+'.v:count1<CR>
+nnoremap <silent> <A-k> :<C-U>execute 'm-1-'.v:count1<CR>
+vnoremap <silent><A-j> :<C-U>execute "'\<,'\>m'>+".v:count1<CR>gv
+vnoremap <silent><A-k> :<C-U>execute "'\<,'\>m'<-1-".v:count1<CR>gv
 
-noremap <A-h> <<
-vnoremap <A-h> <gv
-vnoremap <A-l> >gv
 noremap <A-l> >>
+noremap <A-h> <<
+vnoremap <silent> <A-l> :<C-U>execute "'\<,'\>>"<CR>gv
+vnoremap <silent> <A-h> :<C-U>execute "'\<,'\><"<CR>gv
 
 syntax on
 
