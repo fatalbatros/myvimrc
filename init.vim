@@ -10,6 +10,7 @@ set splitright
 let g:netrw_banner=0
 let g:netrw_browse_Split=0
 
+
 nmap <silent> <Space>t :Texplore<CR>
 nmap <silent> <Space>e :Rexplore<CR>
 nmap <silent> <Space>od :call AbrirDirectorio()<CR>
@@ -18,7 +19,6 @@ noremap <silent> <C-Left> :vertical resize -3<CR>
 noremap <silent> <C-Right> :vertical resize +3<CR>
 noremap <silent> <C-Up> :resize -3<CR>
 noremap <silent> <C-Down> :resize +3<CR>
-
 
 "-------------------------------- INTEGRACION CON PYTHON -----------
 set path =,,C:\Users\joel\AppData\Local\Programs\Python\Python311\**
@@ -31,6 +31,13 @@ nnoremap <silent> <leader>tt :call AbrirTerminal_cmd()<CR>
 nnoremap <silent> <Leader>r ggVG"cy :silent call Correr()<CR>
 nnoremap <silent> <Leader>c }V{"cy :silent call Correr()<CR>}
 nnoremap <silent> <Leader>v V"cy :silent call Correr()<CR>hj
+
+
+nnoremap <silent> <A-e> :<C-U>call Comentar_normal()<CR>
+nnoremap <silent> <A-q> :<C-U>call Descomentar_normal()<CR>
+vnoremap <silent> <A-e> :<C-U>call Comentar_visual()<CR>gv
+vnoremap <silent> <A-q> :<C-U>call Descomentar_visual()<CR>gv
+
 "--------------------------------------------------------------------
 
 "-------------------------- SATUS LINES----------------------------
@@ -55,6 +62,8 @@ colorscheme kanagawa-wave
 "colorscheme rasmus
 highlight! link SignColumn NonText
 highlight! link LineNr NonText
+
+"--------------------- Indentacion--------------------
 
 nnoremap <silent> <A-j> :<C-U>execute 'm+'.v:count1<CR>
 nnoremap <silent> <A-k> :<C-U>execute 'm-1-'.v:count1<CR>
@@ -212,4 +221,41 @@ function! AbrirDirectorio()
     echom "Joel solamente lo implemento para windows"
   endif
 endfunction
+
+"----------------------------Comentar lineas ---------------------------
+function! Comentar_normal() range
+  let pos = getcurpos()
+  let line = pos[1]
+  execute line .. ',' .. (line + v:count) .. 's/^/#'
+  let pos[2] = pos[2] + 1
+  call setpos('.', pos)
+endfunction 
+
+function! Descomentar_normal() range
+  let pos = getcurpos()
+  let line = pos[1]
+  try
+    execute line .. ',' .. (line + v:count) .. 's/^ *\zs#//'
+    let pos[2] = pos[2] - 1
+    call setpos('.', pos)
+  catch
+  endtry
+endfunction 
+
+
+function! Comentar_visual()
+  execute "'\<,'\>s/^/#"
+  execute ":nohlsearch"
+  normal l
+endfunction 
+
+function! Descomentar_visual()
+  try
+    execute "'\<,'\>s/^ *\\zs#/"
+    execute ":nohlsearch"
+    normal h
+  catch
+  endtry
+endfunction
+
 
