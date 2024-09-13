@@ -246,16 +246,11 @@ endfunction
 function! Comentar_visual()
   execute "'\<,'\>s/^/#"
   execute ":nohlsearch"
-  normal l
 endfunction 
 
 function! Descomentar_visual()
-  try
-    execute "'\<,'\>s/^ *\\zs#/"
-    execute ":nohlsearch"
-    normal h
-  catch
-  endtry
+  execute "'\<,'\>s/^ *\\zs#/e"
+  execute ":nohlsearch"
 endfunction
 
 
