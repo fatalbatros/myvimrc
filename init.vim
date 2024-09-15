@@ -1,15 +1,38 @@
 set noswapfile
-set number
-set relativenumber
 set scrolloff=7
 set smartcase
+"set tabstop=4
+"set softtabstop=4
+"set shiftwidth=4
+"set noexpandtab
+"set listchars=tab:\|\ ,multispace:>\|\ \ \ ,trail:\ ,lead:\ 
 set list
-"--------------------------------- TEMP
-"-------------------------------- VENTANAS ------------------------
+
+"--------------------- info en los bordes ------------
+set number
+set relativenumber
+set showtabline=2
+set tabline=%!Tabline()
+set winbar=%{%Winbar()%}
+set laststatus=3
+set cmdheight=1
+set showcmd
+set showcmdloc=statusline
+set statusline=%(%#LineNr#cmd\ %S%)%=%=%15(%l\ [%L]\ %p%%%)
+"--------------------------------------------------------
+
 set splitright
 let g:netrw_banner=0
 let g:netrw_browse_Split=0
 
+"------------------ plugin ---------------------
+call plug#begin()
+Plug 'rebelot/kanagawa.nvim'
+call plug#end()
+"---------------------------------------------
+colorscheme kanagawa-wave
+highlight! link SignColumn NonText
+highlight! link LineNr NonText
 
 nmap <silent> <Space>t :Texplore<CR>
 nmap <silent> <Space>e :Rexplore<CR>
@@ -21,9 +44,6 @@ noremap <silent> <C-Up> :resize -3<CR>
 noremap <silent> <C-Down> :resize +3<CR>
 
 "-------------------------------- INTEGRACION CON PYTHON -----------
-set path =,,C:\Users\joel\AppData\Local\Programs\Python\Python311\**
-let g:python3_host_prog = 'C:\Users\joel\AppData\Local\Programs\Python\Python311\python.exe'
-
 
 tmap <Esc> <C-\><C-n>
 nnoremap <silent> <leader>tp :call AbrirTerminal()<CR>
@@ -32,39 +52,16 @@ nnoremap <silent> <Leader>r ggVG"cy :silent call Correr()<CR>
 nnoremap <silent> <Leader>c }V{"cy :silent call Correr()<CR>}
 nnoremap <silent> <Leader>v V"cy :silent call Correr()<CR>hj
 
-
+"------------------------ coment -------------------------
+" hacer un autocm en openbufer que asigne b:string_coments dependiendo
+" del filetype asi eso funciona para vim y python
 nnoremap <silent> <A-e> :<C-U>call Comentar_normal()<CR>
 nnoremap <silent> <A-q> :<C-U>call Descomentar_normal()<CR>
 vnoremap <silent> <A-e> :<C-U>call Comentar_visual()<CR>gv
 vnoremap <silent> <A-q> :<C-U>call Descomentar_visual()<CR>gv
 
-"--------------------------------------------------------------------
-
-"-------------------------- SATUS LINES----------------------------
-set showtabline=2
-set tabline=%!Tabline()
-set winbar=%{%Winbar()%}
-
-set laststatus=3
-set cmdheight=1
-set showcmd
-set showcmdloc=statusline
-set statusline=%(%#LineNr#cmd\ %S%)%=%=%15(%l\ [%L]\ %p%%%)
-"--------------------PLUGINS-------------------------------------------
-call plug#begin()
-Plug 'rebelot/kanagawa.nvim'
-"Plug 'kvrohit/rasmus.nvim'
-call plug#end()
-"---------------------------------------------------------------------
-
-"------------------- COLORES------------------------------------------
-colorscheme kanagawa-wave
-"colorscheme rasmus
-highlight! link SignColumn NonText
-highlight! link LineNr NonText
 
 "--------------------- Indentacion--------------------
-
 nnoremap <silent> <A-j> :<C-U>execute 'm+'.v:count1<CR>
 nnoremap <silent> <A-k> :<C-U>execute 'm-1-'.v:count1<CR>
 vnoremap <silent><A-j> :<C-U>execute "'\<,'\>m'>+".v:count1<CR>gv
@@ -200,7 +197,7 @@ endfunction
 function! Correr()
   execute win_id2win(t:terminal_windows_id) "wincmd w"
   execute GuardarUltimaLinea()
-  let @C = ''
+  let @C = "\n\n"
   normal! "cp
   normal! G
   wincmd p
@@ -218,7 +215,7 @@ function! AbrirDirectorio()
       silent execute '!explorer.exe '.path
     endif
   else
-    echom "Joel solamente lo implemento para windows"
+    echom "Alba solamente lo implemento para windows"
   endif
 endfunction
 
@@ -249,8 +246,7 @@ function! Comentar_visual()
 endfunction 
 
 function! Descomentar_visual()
-  execute "'\<,'\>s/^ *\\zs#/e"
+  execute "'\<,'\>s/^ *\\zs#//e"
   execute ":nohlsearch"
 endfunction
-
 
