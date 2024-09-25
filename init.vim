@@ -1,12 +1,13 @@
 set noswapfile
+set filetype
 set scrolloff=7
 set smartcase
-"set tabstop=4
-"set softtabstop=4
-"set shiftwidth=4
-"set noexpandtab
-"set listchars=tab:\|\ ,multispace:>\|\ \ \ ,trail:\ ,lead:\ 
+set softtabstop=4
+set shiftwidth=4
+set expandtab
+set listchars=tab:>\ ,leadmultispace:\|\ \ \ ,trail:\ ,lead:\ 
 set list
+syntax on
 
 "--------------------- info en los bordes ------------
 set number
@@ -29,10 +30,11 @@ let g:netrw_browse_Split=0
 call plug#begin()
 Plug 'rebelot/kanagawa.nvim'
 call plug#end()
-"---------------------------------------------
+"-----------------------------------------------
 colorscheme kanagawa-wave
 highlight! link SignColumn NonText
 highlight! link LineNr NonText
+highlight! link Folded NonText
 
 nmap <silent> <Space>t :Texplore<CR>
 nmap <silent> <Space>e :Rexplore<CR>
@@ -42,23 +44,16 @@ noremap <silent> <C-Left> :vertical resize -3<CR>
 noremap <silent> <C-Right> :vertical resize +3<CR>
 noremap <silent> <C-Up> :resize -3<CR>
 noremap <silent> <C-Down> :resize +3<CR>
+"--------------------------------quickfix------------------
+au FileType qf setl nornu
+noremap <silent> [q :<C-U>execute v:count1.'cprev'<CR>
+noremap <silent> ]q :<C-U>execute v:count1.'cnext'<CR>
+noremap <silent> [l :<C-U>execute v:count1.'lprev'<CR>
+noremap <silent> ]l :<C-U>execute v:count1.'lnext'<CR>
 
 "-------------------------------- INTEGRACION CON PYTHON -----------
-
 tmap <Esc> <C-\><C-n>
-nnoremap <silent> <leader>tp :call AbrirTerminal()<CR>
-nnoremap <silent> <leader>tt :call AbrirTerminal_cmd()<CR>
-nnoremap <silent> <Leader>r ggVG"cy :silent call Correr()<CR>
-nnoremap <silent> <Leader>c }V{"cy :silent call Correr()<CR>}
-nnoremap <silent> <Leader>v V"cy :silent call Correr()<CR>hj
-
-"------------------------ coment -------------------------
-" hacer un autocm en openbufer que asigne b:string_coments dependiendo
-" del filetype asi eso funciona para vim y python
-nnoremap <silent> <A-e> :<C-U>call Comentar_normal()<CR>
-nnoremap <silent> <A-q> :<C-U>call Descomentar_normal()<CR>
-vnoremap <silent> <A-e> :<C-U>call Comentar_visual()<CR>gv
-vnoremap <silent> <A-q> :<C-U>call Descomentar_visual()<CR>gv
+nnoremap <silent> <leader>tt :call OpenTerminal()<CR>
 
 
 "--------------------- Indentacion--------------------
@@ -71,10 +66,8 @@ noremap <A-l> >>
 noremap <A-h> <<
 vnoremap <silent> <A-l> :<C-U>execute "'\<,'\>>"<CR>gv
 vnoremap <silent> <A-h> :<C-U>execute "'\<,'\><"<CR>gv
-
-syntax on
-
 "------------------------- FUNCIONES----------------------------
+
 function! Winbar()
   let s = ""
   if &buftype==#""
@@ -108,145 +101,16 @@ function! Tabline()
   return s
 endfunction
 
-function! BuscarErrores(timer) 
-  call sign_unplace('g1',{'buffer':t:terminal_bufer_number})
-  call sign_place(1,'g1','buscando',t:terminal_bufer_number,{'lnum':line('w$',t:terminal_windows_id)})
-  let hasta = nvim_buf_line_count(t:terminal_bufer_number) 
-  if hasta == t:terminal_last_line
-    return ''
-  endif
-  let t:lines = nvim_buf_get_lines(t:terminal_bufer_number,t:terminal_last_line, hasta,0) 
-  let s = 0
-  for line in t:lines
-    let s = s + 1
-    if line =~ 'Error'
-       call sign_place(0,'','error',t:terminal_bufer_number,{'lnum':t:terminal_last_line + s})
-        call sign_unplace('g1',{'buffer':t:terminal_bufer_number})
-	let errores=1
-    endif
-    if line =='>>>' || line == '>>> '
-       let t = s
-       "echom t + t:terminal_last_line
-    endif
-  endfor
-  if exists("t")
-    call timer_pause(t:timer,1)
-    call sign_unplace('g1',{'buffer':t:terminal_bufer_number})
-    if exists("errores")
-      call sign_place(1,'g1','error',t:terminal_bufer_number,{'lnum':t+ t:terminal_last_line})
-    else
-      call sign_place(1,'g1','finalizado',t:terminal_bufer_number,{'lnum':t+t:terminal_last_line})
-    endif
-  endif
-endfunction
-
-function! GuardarUltimaLinea()
-  let t:terminal_last_line = line('.',t:terminal_windows_id)
-  call timer_pause(t:timer,0)
-endfunction
-
-function! SalirTab()
-   if exists("t:timer")
-	call timer_pause(t:timer,1)
-   endif
-endfunction
-
-function! EntrarTab()
-   if exists("t:timer")
-     call timer_pause(t:timer,0)
-   endif
-endfunction
-
-autocmd TabLeave * call SalirTab()
-autocmd TabEnter * call EntrarTab()
-
-function! AbrirTerminal_cmd()
+function! OpenTerminal()
   execute "vnew term://cmd"
   highlight! link SignColumn LineNr
   setlocal nonumber
   setlocal norelativenumber
-  setlocal signcolumn=yes:1
   setlocal statuscolumn=%s\  
-  wincmd p
+  normal i
 endfunction
 
-function! AbrirTerminal()
-  execute "vnew term://cmd"
-  highlight! link SignColumn LineNr
-  let t:timer = timer_start(100, 'BuscarErrores',{'repeat':-1})
-  call timer_pause(t:timer,1)
-  execute 'autocmd WinClosed <buffer> call timer_stop(t:timer)'
-  execute 'autocmd WinClosed <buffer> unlet t:timer'
-  execute 'tnoremap <buffer><silent> <CR> <C-\><C-n>:call GuardarUltimaLinea()<CR>i<CR>'
-  execute "sign define error text=>> texthl=ErrorMsg"
-  execute "sign define buscando text=>> texthl=ModeMsg"
-  execute "sign define finalizado text=>> texthl=LineNr"
-  let t:terminal_windows_id = win_getid()
-  let t:terminal_id = b:terminal_job_id
-  let t:terminal_bufer_number = bufnr()
-  setlocal nonumber
-  setlocal norelativenumber
-  setlocal signcolumn=yes:1
-  setlocal statuscolumn=%s\  
-  execute chansend(t:terminal_id,'python')
-  execute chansend(t:terminal_id,"\r")
-  let t:terminal_last_line=0
-  wincmd p
-endfunction
-
-function! Correr()
-  execute win_id2win(t:terminal_windows_id) "wincmd w"
-  execute GuardarUltimaLinea()
-  let @C = "\n\n"
-  normal! "cp
-  normal! G
-  wincmd p
-endfunction
-
-function! AbrirDirectorio()
-  if &buftype=='terminal'
-    echom "No se puede abrir el directorio de una terminal"
-  elseif has('win32')
-    let path = substitute(expand('%:p:h'),'/','\\','g')
-    if path != ""
-      silent execute '!explorer.exe '.path
-    else
-      let path = substitute(b:netrw_curdir, '/','\\','g')
-      silent execute '!explorer.exe '.path
-    endif
-  else
-    echom "Alba solamente lo implemento para windows"
-  endif
-endfunction
-
-"----------------------------Comentar lineas ---------------------------
-function! Comentar_normal() range
-  let pos = getcurpos()
-  let line = pos[1]
-  execute line .. ',' .. (line + v:count) .. 's/^/#'
-  let pos[2] = pos[2] + 1
-  call setpos('.', pos)
-endfunction 
-
-function! Descomentar_normal() range
-  let pos = getcurpos()
-  let line = pos[1]
-  try
-    execute line .. ',' .. (line + v:count) .. 's/^ *\zs#//'
-    let pos[2] = pos[2] - 1
-    call setpos('.', pos)
-  catch
-  endtry
-endfunction 
-
-
-function! Comentar_visual()
-  execute "'\<,'\>s/^/#"
-  execute ":nohlsearch"
-endfunction 
-
-function! Descomentar_visual()
-  execute "'\<,'\>s/^ *\\zs#//e"
-  execute ":nohlsearch"
-endfunction
-
+" Esto no merece estar en ftplugin todavia
+au FileType tex setl softtabstop=2 shiftwidth=2 listchars=leadmultispace:\|\  
+au FileType vim setl softtabstop=2 shiftwidth=2 listchars=leadmultispace:\|\ 
+au FileType cairo setl commentstring=//%s
