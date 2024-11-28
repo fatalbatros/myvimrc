@@ -1,7 +1,10 @@
+au FileType cairo setl commentstring=//%s
+
 nnoremap <silent> <A-e> :<C-U>call Comentar_normal()<CR>
 nnoremap <silent> <A-q> :<C-U>call Descomentar_normal()<CR>
 vnoremap <silent> <A-e> :<C-U>call Comentar_visual()<CR>gv
 vnoremap <silent> <A-q> :<C-U>call Descomentar_visual()<CR>gv
+
 
 function! Comentar_normal() range
   let pos = getcurpos()

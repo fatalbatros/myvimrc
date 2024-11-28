@@ -1,5 +1,5 @@
+"set notermguicolors
 set noswapfile
-set filetype
 set scrolloff=7
 set smartcase
 set softtabstop=4
@@ -7,7 +7,10 @@ set shiftwidth=4
 set expandtab
 set listchars=tab:>\ ,leadmultispace:\|\ \ \ ,trail:\ ,lead:\ 
 set list
+set splitright
 syntax on
+set completeopt=menu,menuone,preview
+
 
 "--------------------- info en los bordes ------------
 set number
@@ -19,26 +22,34 @@ set laststatus=3
 set cmdheight=1
 set showcmd
 set showcmdloc=statusline
-set statusline=%(%#LineNr#cmd\ %S%)%=%=%15(%l\ [%L]\ %p%%%)
+set statusline=%(%#NonText#cmd\ %S%)%=%=%15(%l\ [%L]\ %p%%%)
 "--------------------------------------------------------
-
 set splitright
 let g:netrw_banner=0
 let g:netrw_browse_Split=0
 
 "------------------ plugin ---------------------
 call plug#begin()
-Plug 'rebelot/kanagawa.nvim'
+Plug 'neovim/nvim-lspconfig'
+Plug 'tpope/vim-fugitive'
 call plug#end()
 "-----------------------------------------------
-colorscheme kanagawa-wave
+
 highlight! link SignColumn NonText
-highlight! link LineNr NonText
+highlight! link LineNrAbove NonText
+highlight! link LineNr Normal
+highlight! link LineNrBelow NonText
 highlight! link Folded NonText
+highlight! link WinSeparator NonText
+"highlight! link WinSeparator TabLineFill
+highlight! link FloatBorder WinSeparator
+highlight! link NormalFloat Normal
+
+nmap <silent> ]q :copen<CR>
+nmap <silent> [q :cclose<CR>
 
 nmap <silent> <Space>t :Texplore<CR>
 nmap <silent> <Space>e :Rexplore<CR>
-nmap <silent> <Space>od :call AbrirDirectorio()<CR>
 
 noremap <silent> <C-Left> :vertical resize -3<CR>
 noremap <silent> <C-Right> :vertical resize +3<CR>
@@ -46,8 +57,8 @@ noremap <silent> <C-Up> :resize -3<CR>
 noremap <silent> <C-Down> :resize +3<CR>
 "--------------------------------quickfix------------------
 au FileType qf setl nornu
-noremap <silent> [q :<C-U>execute v:count1.'cprev'<CR>
-noremap <silent> ]q :<C-U>execute v:count1.'cnext'<CR>
+noremap <silent> [c :<C-U>execute v:count1.'cprev'<CR>
+noremap <silent> ]c :<C-U>execute v:count1.'cnext'<CR>
 noremap <silent> [l :<C-U>execute v:count1.'lprev'<CR>
 noremap <silent> ]l :<C-U>execute v:count1.'lnext'<CR>
 
@@ -66,16 +77,20 @@ noremap <A-l> >>
 noremap <A-h> <<
 vnoremap <silent> <A-l> :<C-U>execute "'\<,'\>>"<CR>gv
 vnoremap <silent> <A-h> :<C-U>execute "'\<,'\><"<CR>gv
+"------------------------- COPY----------------------------
+noremap <space>y "+y
+noremap <space>p "+p
 "------------------------- FUNCIONES----------------------------
+noremap <leader>y "+y
 
 function! Winbar()
   let s = ""
   if &buftype==#""
-    let s = " %(%#LineNr#[%L]%)%=%=%(%#LineNr#%m (%n) %f%)"
+    let s = "%(%#NonText#[%L]%)%=%=%(%#Normal#%m (%n) %f%)"
   elseif &buftype==#"help"
-    let s = " %=%=%(%#LineNr# [Help] %f%)"
+    let s = "%(%#NonText# %)%=%=%(%#NonText# [Help] %f%)"
   else
-    let s = "%=%(%#LineNr# %{&buftype}%)"
+    let s = "%(%#NonText#%)%=%(%#NonText# (%n) %{&buftype}%)"
   endif
   return s
 endfunction
@@ -102,15 +117,13 @@ function! Tabline()
 endfunction
 
 function! OpenTerminal()
-  execute "vnew term://cmd"
-  highlight! link SignColumn LineNr
+  execute "vnew term://bash"
   setlocal nonumber
   setlocal norelativenumber
   setlocal statuscolumn=%s\  
+  au WinClosed <buffer> bd!
   normal i
 endfunction
 
-" Esto no merece estar en ftplugin todavia
-au FileType tex setl softtabstop=2 shiftwidth=2 listchars=leadmultispace:\|\  
 au FileType vim setl softtabstop=2 shiftwidth=2 listchars=leadmultispace:\|\ 
-au FileType cairo setl commentstring=//%s
+
