@@ -1,9 +1,9 @@
 set ttimeoutlen=10
 set termguicolors
-set hidden
-set noswapfile
 set scrolloff=5
 set smartcase
+set hidden
+set noswapfile
 set softtabstop=2
 set shiftwidth=2
 set expandtab
@@ -22,20 +22,19 @@ let g:netrw_browse_Split=0
 set hlsearch
 set incsearch
 nnoremap <silent> <C-l> :noh<CR>
-"----------------------------------
-"
+
+
 "-------quickfix---------------------------
 nmap <silent> ]q :copen<CR>
 nmap <silent> [q :cclose<CR>
 noremap <silent> [c :<C-U>execute v:count1.'cprev'<CR>
 noremap <silent> ]c :<C-U>execute v:count1.'cnext'<CR>
-"-----------------------------------------
+
 
 "-----------------general---------------------------
 nmap <Space>t :tabnew 
 nmap <silent> <Space>e :Rexplore<CR>
 noremap Y y$
-"----------------------------------------------------
 
 
 "----------------- clipboard ---------------------------
@@ -47,14 +46,9 @@ noremap <silent> <C-Left> :vertical resize -3<CR>
 noremap <silent> <C-Right> :vertical resize +3<CR>
 noremap <silent> <C-Up> :resize -3<CR>
 noremap <silent> <C-Down> :resize +3<CR>
-"----------------------------------------------------
 
-"call plug#begin()
-"    let g:lsp_auto_enable = 0
-"    Plug 'prabirshrestha/vim-lsp', {'for':['rust','typescript','cairo']}
-"    Plug 'tpope/vim-fugitive'
-"call plug#end()
 
+packadd vim-fugitive
 colorscheme based
 
 "--------------------- Indentacion--------------------
@@ -74,7 +68,6 @@ noremap <A-l> >>
 noremap <A-h> <<
 vnoremap <silent> <A-l> :<C-U>execute "'\<,'\>>"<CR>gv
 vnoremap <silent> <A-h> :<C-U>execute "'\<,'\><"<CR>gv
-"------------------------------------------------------------------
 
 
 "----------------Statusline--------------------------
@@ -95,7 +88,7 @@ function! Statusline()
   endif
   return s
 endfunction
-"--------------------------------------------------------------
+
 
 "--------------------------Tabline--------------------------------
 set showtabline=2
@@ -121,7 +114,7 @@ function! Tabline()
   let s .= '%#TabLineFill#'
   return s
 endfunction
-"--------------------------------------------------------------
+
 
 "---------------------coments----------------------------------
 "my terminal send <Esc> as ^[ and <Alt-x> as ^[x. This is for seting what <A-x> should look like
@@ -163,12 +156,11 @@ function! s:Descomentar_visual()
   execute "'\<,'\>s/^ *\\zs" .. escape(split(&commentstring, '%s')[0],'/').. "//e"
   execute ":nohlsearch"
 endfunction
-"--------------------------------------------------
+
 
 "------------TERMINAL----------------
 tmap <Esc> <C-\><C-n>
-"----------------------------------------------------------
-"
+
+
 "------------lsp----------------
 source <sfile>:h/lsp/source.vim
-"----------------------------------------------------------
