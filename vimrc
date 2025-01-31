@@ -77,43 +77,41 @@ set cmdheight=1
 set showcmd
 set showcmdloc=last
 
-function! Statusline()
-  let s = ""
-  if &buftype==#""
-    let s = "%(%#Normal#[%L]%)%=%=%(%#Normal#%m (%n) %f%) "
-  elseif &buftype==#"help"
-    let s = "%(%#Normal# %)%=%=%(%#NonText# [Help] %f%) "
+def Statusline(): string
+  if &buftype ==# ""
+    return "%(%#Normal#[%L]%)%=%=%(%#Normal#%m (%n) %f%) "
+  elseif &buftype ==# "help"
+    return "%(%#Normal# %)%=%=%(%#NonText# [Help] %f%) "
   else
-    let s = "%(%#Normal#%)%=%(%#NonText# (%n) %{&buftype}%) "
+    return "%(%#Normal#%)%=%(%#NonText# (%n) %{&buftype}%) "
   endif
-  return s
-endfunction
+enddef
 
 
 "--------------------------Tabline--------------------------------
 set showtabline=2
 set tabline=%!Tabline()
 
-function! Tabline()
-  let s = ''
+def Tabline(): string
+  var s = ''
   for i in range(tabpagenr('$'))
-    let tab = i + 1
-    let winnr = tabpagewinnr(tab)
-    let buflist = tabpagebuflist(tab)
-    let bufnr = buflist[winnr - 1]
-    let bufname = bufname(bufnr)
-    let bufmodified = getbufvar(bufnr, "&mod")
-    let s .= '%' . tab . 'T'
-    let s .= (tab == tabpagenr() ? '%#TabLineSel#' : '%#TabLine#')
-    let s .= ' ' . tab .':'
-    let s .= (bufname != '' ? '['. fnamemodify(bufname, ':t') . '] ' : '[No Name] ')
+    var tab = i + 1
+    var winnr = tabpagewinnr(tab)
+    var buflist = tabpagebuflist(tab)
+    var bufnr = buflist[winnr - 1]
+    var bufname = bufname(bufnr)
+    var bufmodified = getbufvar(bufnr, "&mod")
+    s = s .. '%' .. tab .. 'T'
+    s = s .. (tab == tabpagenr() ? '%#TabLineSel#' : '%#TabLine#')
+    s = s .. ' ' .. tab .. ':'
+    s = s .. (bufname != '' ? '[' .. fnamemodify(bufname, ':t') .. '] ' : '[No Name] ')
     if bufmodified
-      let s .= '[+] '
+      s = s .. '[+] '
     endif
   endfor
-  let s .= '%#TabLineFill#'
+  s = s .. '%#TabLineFill#'
   return s
-endfunction
+enddef
 
 
 "---------------------coments----------------------------------
