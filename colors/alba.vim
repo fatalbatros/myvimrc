@@ -1,9 +1,9 @@
 
-let @f = ':echo synIDattr(synIDtrans(synID(line("."), col("."), 1)),"fg")'
-let @g = ':echo synIDattr(synIDtrans(synID(line("."), col("."), 1)),"fg#")'
-let @v = ':echo synIDattr(synIDtrans(synID(line("."), col("."), 1)),"bg")'
-let @b = ':echo synIDattr(synIDtrans(synID(line("."), col("."), 1)),"bg#")'
-let @n = ':echo synIDattr(synIDtrans(synID(line("."), col("."), 1)),"name")'
+"let @f = ':echo synIDattr(synIDtrans(synID(line("."), col("."), 1)),"fg")'
+"let @g = ':echo synIDattr(synIDtrans(synID(line("."), col("."), 1)),"fg#")'
+"let @v = ':echo synIDattr(synIDtrans(synID(line("."), col("."), 1)),"bg")'
+"let @b = ':echo synIDattr(synIDtrans(synID(line("."), col("."), 1)),"bg#")'
+"let @n = ':echo synIDattr(synIDtrans(synID(line("."), col("."), 1)),"name")'
 
 
 " Colors used
@@ -42,7 +42,7 @@ hi! link Folded FadedStrong
 "" -------------------------
 "" - Window/Tab delimiters -
 "" -------------------------
-hi! link VertSplit Highlight
+hi! link VertSplit FadedStrong
 hi! link TabLine FadedStrong
 hi! link TabLineFill Empty
 hi! link TabLineSel Normal
