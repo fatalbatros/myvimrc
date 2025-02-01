@@ -1,57 +1,83 @@
-set ttimeoutlen=10
+
+" --- load THE plugin ---
+filetype plugin on
+packadd vim-fugitive
+
+" --- colors --- 
+syntax on
 set termguicolors
-set scrolloff=5
-set smartcase
+colorscheme alba
+
+" --- buffer sanity ---
 set hidden
 set noswapfile
-set softtabstop=2
+
+set ttimeoutlen=10
+set scrolloff=6
+set nowrap
+set textwidth=0
+"some syntax files force tetxtwidth when they are loaded. This is the counter
+au syntax * set textwidth=0
+
+" -- tab behaviour --
+set softtabstop=-1
 set shiftwidth=2
 set expandtab
-set listchars=tab:>\ ,leadmultispace:\|\ ,trail:\ ,lead:\ 
-set list
-set showbreak=+++\ 
-set splitright
-filetype plugin on
-set completeopt=menu,popup
-syntax on
-set keywordprg=
-let g:netrw_banner=0
-let g:netrw_browse_Split=0
 
-"----------------- search ----------
+" --- visual aid ---
+set list
+set showbreak=^\ 
+set listchars=tab:>\ ,trail:\_,leadmultispace:│\ 
+"this is for autoset the aid when changing the amount of spaces in a tab with set sw=n
+au optionset shiftwidth execute 'set listchars=tab:>\ ,trail:_,leadmultispace:│' .. repeat('\ ',&sw-1)
+
+
+" --- split config ---
+set splitright
+set fillchars+=vert:│
+
+" completion and defaul K
+set completeopt=menu,popup
+set keywordprg=
+
+" --- netrw setup ---
+let g:netrw_banner=0
+let g:netrw_altfile=1
+let g:netrw_cursor=0
+
+
+" --- search ---
 set hlsearch
 set incsearch
 nnoremap <silent> <C-l> :noh<CR>
 
 
-"-------quickfix---------------------------
+" --- quickfix ---
 nmap <silent> ]q :copen<CR>
 nmap <silent> [q :cclose<CR>
 noremap <silent> [c :<C-U>execute v:count1.'cprev'<CR>
 noremap <silent> ]c :<C-U>execute v:count1.'cnext'<CR>
 
 
-"-----------------general---------------------------
+" --- general ---
 nmap <Space>t :tabnew 
-nmap <silent> <Space>e :Rexplore<CR>
+nmap <silent> <Space>e <C-6>
 noremap Y y$
 
 
-"----------------- clipboard ---------------------------
+" ---  clipboard ---
 noremap <silent> <space>y "yy <Bar> :call system('xclip -selection "clipboard"', @y)<CR>
 noremap <silent> <space>p :r!xclip -o<CR>
 
-"-------------windows resizing----------------------
+
+" --- windows resizing ---
 noremap <silent> <C-Left> :vertical resize -3<CR>
 noremap <silent> <C-Right> :vertical resize +3<CR>
 noremap <silent> <C-Up> :resize -3<CR>
 noremap <silent> <C-Down> :resize +3<CR>
 
 
-packadd vim-fugitive
-colorscheme based
-
-"--------------------- Indentacion--------------------
+" --- Indentation ---
 "my terminal send <Esc> as ^[ and <Alt-x> as ^[x. This is for seting what <A-j> should look like
 "read :help set-termcap for reference, you can check what the term send with sed -n l
 set <A-j>=j
@@ -59,18 +85,18 @@ set <A-k>=k
 set <A-h>=h
 set <A-l>=l
 
-nnoremap <silent><A-j> :<C-U>execute 'm+'.v:count1<CR>
-nnoremap <silent><A-k> :<C-U>execute 'm-1-'.v:count1<CR>
-vnoremap <silent><A-j> :<C-U>execute "'\<,'\>m'>+".v:count1<CR>gv
-vnoremap <silent><A-k> :<C-U>execute "'\<,'\>m'<-1-".v:count1<CR>gv
+nnoremap <silent> <A-j> :<C-U>execute 'm+'.v:count1<CR>
+nnoremap <silent> <A-k> :<C-U>execute 'm-1-'.v:count1<CR>
+vnoremap <silent> <A-j> :<C-U>execute "'\<,'\>m'>+".v:count1<CR>gv
+vnoremap <silent> <A-k> :<C-U>execute "'\<,'\>m'<-1-".v:count1<CR>gv
 
-noremap <A-l> >>
-noremap <A-h> <<
+noremap <silent> <A-l> >>
+noremap <silent> <A-h> <<
 vnoremap <silent> <A-l> :<C-U>execute "'\<,'\>>"<CR>gv
 vnoremap <silent> <A-h> :<C-U>execute "'\<,'\><"<CR>gv
 
 
-"----------------Statusline--------------------------
+" --- Statusline --- (vim9)
 set statusline=%{%Statusline()%}
 set laststatus=2
 set cmdheight=1
@@ -89,8 +115,7 @@ function! Statusline()
   return s
 endfunction
 
-
-"--------------------------Tabline--------------------------------
+" --- Tabline --- (vim9)
 set showtabline=2
 set tabline=%!Tabline()
 
@@ -115,8 +140,7 @@ function! Tabline()
   return s
 endfunction
 
-
-"---------------------coments----------------------------------
+" --- coments ---
 "my terminal send <Esc> as ^[ and <Alt-x> as ^[x. This is for seting what <A-x> should look like
 "read :help set-termcap for reference, you can check what the term send with sed -n l
 set <A-e>=e
@@ -133,7 +157,7 @@ function! s:Comentar_normal() range
   execute line .. ',' .. (line + v:count) .. 's/^/' .. escape(split(&commentstring, '%s')[0],'/')
   let pos[2] = pos[2] + 1
   call setpos('.', pos)
-endfunction 
+endfunction
 
 function! s:Descomentar_normal() range
   let pos = getcurpos()
@@ -144,12 +168,12 @@ function! s:Descomentar_normal() range
     call setpos('.', pos)
   catch
   endtry
-endfunction 
+endfunction
 
 function! s:Comentar_visual()
-  execute "'\<,'\>s/^/" .. escape(split(&commentstring, '%s')[0],'/') 
+  execute "'\<,'\>s/^/" .. escape(split(&commentstring, '%s')[0],'/')
   execute ":nohlsearch"
-endfunction 
+endfunction
 
 
 function! s:Descomentar_visual()
