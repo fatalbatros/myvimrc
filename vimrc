@@ -8,6 +8,10 @@ syntax on
 set termguicolors
 colorscheme alba
 
+" --- filetypes config ---
+au filetype vim setlocal twxtwidth=2
+au filetype cairo setlocal commentstring=//%s
+
 " --- buffer sanity ---
 set hidden
 set noswapfile
