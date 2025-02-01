@@ -7,6 +7,10 @@ syntax on
 set termguicolors
 colorscheme alba
 
+" --- filetypes config ---
+au filetype vim setlocal twxtwidth=2
+au filetype cairo setlocal commentstring=//%s
+
 " --- buffer sanity ---
 set hidden
 set noswapfile
@@ -16,11 +20,11 @@ set scrolloff=6
 set nowrap
 set textwidth=0
 "some syntax files force tetxtwidth when they are loaded. This is the counter
-au syntax * set textwidth=0
+au syntax * setlocal textwidth=0
 
 " -- tab behaviour --
 set softtabstop=-1
-set shiftwidth=2
+set shiftwidth=4
 set expandtab
 
 " --- visual aid ---
