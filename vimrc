@@ -9,7 +9,6 @@ set termguicolors
 colorscheme alba
 
 " --- filetypes config ---
-au filetype vim setlocal twxtwidth=2
 au filetype cairo setlocal commentstring=//%s
 
 " --- buffer sanity ---
@@ -21,19 +20,19 @@ set scrolloff=6
 set nowrap
 set textwidth=0
 "some syntax files force tetxtwidth when they are loaded. This is the counter
-au syntax * set textwidth=0
+au syntax * setlocal textwidth=0
 
 " -- tab behaviour --
 set softtabstop=-1
-set shiftwidth=2
+set shiftwidth=4
 set expandtab
 
 " --- visual aid ---
 set list
 set showbreak=^\ 
-set listchars=tab:>\ ,trail:\_,leadmultispace:│\ 
 "this is for autoset the aid when changing the amount of spaces in a tab with set sw=n
-au optionset shiftwidth execute 'set listchars=tab:>\ ,trail:_,leadmultispace:│' .. repeat('\ ',&sw-1)
+execute 'set listchars=tab:>\ ,trail:_,leadmultispace:│' .. repeat('\ ',&sw-1)
+au optionset shiftwidth execute 'setlocal listchars=tab:>\ ,trail:_,leadmultispace:│' .. repeat('\ ',&sw-1)
 
 
 " --- split config ---
