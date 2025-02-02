@@ -8,7 +8,6 @@ set termguicolors
 colorscheme alba
 
 " --- filetypes config ---
-au filetype vim setlocal sw=2
 au filetype cairo setlocal commentstring=//%s
 
 " --- buffer sanity ---
@@ -32,7 +31,7 @@ set list
 set showbreak=^\ 
 execute 'set listchars=tab:>\ ,trail:_,leadmultispace:│' .. repeat('\ ',&sw-1)
 "this is for autoset the aid when changing the amount of spaces in a tab with set sw=n
-au optionset shiftwidth execute 'set listchars=tab:>\ ,trail:_,leadmultispace:│' .. repeat('\ ',&sw-1)
+au optionset shiftwidth execute 'setlocal listchars=tab:>\ ,trail:_,leadmultispace:│' .. repeat('\ ',&sw-1)
 
 
 " --- split config ---
