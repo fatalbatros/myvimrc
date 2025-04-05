@@ -18,20 +18,21 @@ set ttimeoutlen=10
 set scrolloff=6
 set nowrap
 set textwidth=0
-"some syntax files force tetxtwidth when they are loaded. This is the counter
-au syntax * setlocal textwidth=0
+"some syntax files (vim) force tetxtwidth when they are loaded. This is the counter
+au syntax vim setlocal textwidth=0 shiftwidth=2
 
 " -- tab behaviour --
 set softtabstop=-1
 set shiftwidth=4
 set expandtab
+set autoindent
 
 " --- visual aid ---
+execute 'set listchars=tab:>\ ,leadmultispace:│' .. repeat('\ ',&sw-1)
+"this is for autoset the aid when changing the amount of spaces in a tab with set sw=n
+au optionset shiftwidth execute 'setlocal listchars=tab:>\ ,leadmultispace:│' .. repeat('\ ',&sw-1)
 set list
 set showbreak=^\ 
-execute 'set listchars=tab:>\ ,trail:_,leadmultispace:│' .. repeat('\ ',&sw-1)
-"this is for autoset the aid when changing the amount of spaces in a tab with set sw=n
-au optionset shiftwidth execute 'setlocal listchars=tab:>\ ,trail:_,leadmultispace:│' .. repeat('\ ',&sw-1)
 
 
 " --- split config ---

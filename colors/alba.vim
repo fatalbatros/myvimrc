@@ -15,14 +15,19 @@
 " #F2F2F2
 " #D99962
 " Naranja ff9e00
+" rojo fs fd1813
+" verde fs 0fa14c
+" azul fs 1f70c1
+" naranja fs e7e7d8
+" warning d99962
 
 hi! Normal          ctermfg=White        ctermbg=Black    cterm=NONE    guifg=#DDDDDD    guibg=#0D0D0D    gui=NONE
 hi! Highlight       ctermfg=White        ctermbg=Black    cterm=NONE    guifg=#FFFFFF    guibg=#0D0D0D    gui=NONE
 hi! FadedLight      ctermfg=White        ctermbg=Black    cterm=NONE    guifg=#8C8C8C    guibg=#0D0D0D    gui=NONE
 hi! FadedStrong     ctermfg=White        ctermbg=Black    cterm=NONE    guifg=#404040    guibg=#0D0D0D    gui=NONE
 hi! Empty           ctermfg=White        ctermbg=Black    cterm=NONE    guifg=#0D0D0D    guibg=#0D0D0D    gui=NONE
-hi! ErrorMsg        ctermfg=DarkGray     ctermbg=Black    cterm=NONE    guifg=#FF0000    guibg=#0D0D0D    gui=NONE
-hi! WarningMsg      ctermfg=210          ctermbg=Black    cterm=NONE    guifg=#D99962    guibg=#0D0D0D    gui=NONE
+hi! ErrorMsg        ctermfg=DarkGray     ctermbg=Black    cterm=NONE    guifg=#fd1813    guibg=#0D0D0D    gui=NONE
+hi! WarningMsg      ctermfg=210          ctermbg=Black    cterm=NONE    guifg=#d99962    guibg=#0D0D0D    gui=NONE
 
 
 " --------------------------------
@@ -51,7 +56,7 @@ hi! link TabLineSel Normal
 " - File Navigation / Searching -
 " -------------------------------
 "
-hi! Directory       ctermfg=White        ctermbg=Black    cterm=Bold    guifg=#DDDDDD    guibg=#0D0D0D    gui=NONE
+hi! Directory       ctermfg=White        ctermbg=Black    cterm=NONE    guifg=#DDDDDD    guibg=#0D0D0D    gui=NONE
 hi! link netrwPlain      FadedLight
 
 hi! Search          ctermfg=White        ctermbg=210      cterm=NONE    guifg=#0D0D0D    guibg=#D99962    gui=NONE
