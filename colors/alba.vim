@@ -61,6 +61,10 @@ hi! link netrwPlain      FadedLight
 
 hi! Search          ctermfg=White        ctermbg=210      cterm=NONE    guifg=#0D0D0D    guibg=#D99962    gui=NONE
 hi! IncSearch       ctermfg=White        ctermbg=210      cterm=NONE    guifg=#0D0D0D    guibg=#D99962    gui=NONE
+if &term =~ 'linux'
+  hi! Search          ctermfg=White        ctermbg=210      cterm=NONE    guifg=#FFFFFF  guibg=#880000   gui=NONE
+  hi! IncSearch       ctermfg=White        ctermbg=210      cterm=NONE    guifg=#FFFFFF   guibg=#880000   gui=NONE
+endif
 
 " -----------------
 " - Prompt/Status -
@@ -77,7 +81,12 @@ hi! link MoreMsg         WarningMsg
 " - Visual aid -
 " --------------
 hi! link MatchParen      ErrorMsg
-hi! Visual          ctermfg=White        ctermbg=DarkGray     cterm=NONE    guifg=#F2F2F2    guibg=#404040    gui=NONE
+
+hi! Visual          ctermfg=White        ctermbg=Black     cterm=NONE    guifg=#F2F2F2    guibg=#404040    gui=NONE
+if &term =~ 'linux'
+  hi! Visual          ctermfg=White      ctermbg=Black    cterm=NONE    guifg=#000000   guibg=#AAAAAA      gui=NONE
+endif
+
 hi! link NonText FadedStrong
 
 hi! link Todo            WarningMsg
