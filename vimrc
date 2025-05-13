@@ -186,8 +186,8 @@ endfunction
 
 
 def s:filter_list(id: number, key: string): bool
-  var result = getcurpos(id)[1]
-  var filename = split(getbufline(winbufnr(id), result)[0])[-1]
+  const result = getcurpos(id)[1]
+  const filename = split(getbufline(winbufnr(id), result)[0])[-1]
   if key == ''
     execute(':buffer ' .. filename)
     popup_close(id, 0)
@@ -208,18 +208,88 @@ def s:filter_list(id: number, key: string): bool
   return true
 enddef
 
+def s:pad_to_width(text: string, width: number, side: string): string
+  const pad = width - strwidth(text)
+  if pad <= 0 | return text | endif
+  if side == 'left'  | return repeat(' ', pad) .. text | endif
+  return text .. repeat(' ', pad) 
+enddef
+
 def s:LIST()
-  var bufers = getbufinfo({buflisted: 1, bufloaded: 1})
+  const bufers = getbufinfo({buflisted: 1, bufloaded: 1})
   var lista = []
   for bufer in bufers
-    var text = bufer['bufnr']  .. "    line " .. bufer['lnum'] .. "    " .. bufer['name']
+    const bufnr = s:pad_to_width(string(bufer['bufnr']), 3, 'right')
+    const line = s:pad_to_width(string(bufer['lnum']), 4, 'left')
+    const lines = s:pad_to_width(string(bufer['linecount']), 4, 'right')
+    const fname = bufer['name']
+    const short = s:pad_to_width(fnamemodify(fname, ":t"), 25, 'right')
+    const text = bufnr  .. "  "  ..  line .. "/" .. lines .. "   " .. short .. " "  .. fname
     extend(lista, [text])
   endfor
-  popup_menu(lista, { callback: (_, _) => '',  filter: s:filter_list})
+  const options = {
+    border: [1, 1, 1, 1],
+    highlight: 'Normal',
+    borderhighlight: ['LineNr'],
+    borderchars: ['─', '│', '─', '│', '┌', '┐', '┘', '└'], 
+    callback: (_, _) => '',
+    filter: s:filter_list,
+  }
+  popup_menu(lista, options)
 enddef
 
 nnoremap <silent> <space>l :call <SID>LIST()<CR>
 
+def s:filter_marks(id: number, key: string): bool
+  const result = getcurpos(id)[1]
+  const mark = split(getbufline(winbufnr(id), result)[0])[0]
+  const filename = split(getbufline(winbufnr(id), result)[0])[-1]
+  if key == ''
+    execute("normal! `" .. mark)
+    popup_close(id, 0)
+  elseif key == 'p'
+    execute("normal! `" .. mark)
+  elseif key == 't'
+    execute(':tabnew ' .. filename)
+    execute("normal! `" .. mark)
+    popup_close(id, 0)
+  elseif key == 's'
+    execute(':vsplit ' .. filename)
+    execute("normal! `" .. mark)
+    popup_close(id, 0)
+  elseif key == 'd'
+    execute(':delmarks ' .. mark)
+    deletebufline(winbufnr(id), result)
+  else
+    return popup_filter_menu(id, key)
+  endif
+  return true
+enddef
+
+def s:MARKS()
+  const marks = getmarklist()
+  var lista = []
+  for mark in marks
+    if match(mark['mark'], "[0-9]") != -1 | continue | endif
+    const leter = mark['mark'][-1]
+    const line = s:pad_to_width(string(mark['pos'][1]), 5, 'left')
+    const fname = mark['file']
+    const short = s:pad_to_width(fnamemodify(fname, ":t"), 25, 'right')
+    var text = leter  .. "    " .. line  .. "    " .. short .. fname
+    extend(lista, [text])
+  endfor
+  const options = {
+    border: [1, 1, 1, 1],
+    highlight: 'Normal',
+    borderhighlight: ['LineNr'],
+    borderchars: ['─', '│', '─', '│', '┌', '┐', '┘', '└'], 
+    callback: (_, _) => '',
+    filter: s:filter_marks,
+  }
+  popup_menu(lista, options)
+enddef
+
+nnoremap <silent> <space>m :call <SID>MARKS()<CR>
 
 "------------TERMINAL----------------
 tmap <Esc> <C-\><C-n>
