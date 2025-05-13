@@ -185,6 +185,42 @@ function! s:Descomentar_visual()
 endfunction
 
 
+def s:filter_list(id: number, key: string): bool
+  var result = getcurpos(id)[1]
+  var filename = split(getbufline(winbufnr(id), result)[0])[-1]
+  if key == ''
+    execute(':buffer ' .. filename)
+    popup_close(id, 0)
+  elseif key == 'p'
+    execute(':buffer ' .. filename)
+  elseif key == 't'
+    execute(':tabnew ' .. filename)
+    popup_close(id, 0)
+  elseif key == 's'
+    execute(':vsplit ' .. filename)
+    popup_close(id, 0)
+  elseif key == 'd'
+    execute(':bdelete ' .. filename)
+    deletebufline(winbufnr(id), result)
+  else 
+    return popup_filter_menu(id, key)
+  endif
+  return true
+enddef
+
+def s:LIST()
+  var bufers = getbufinfo({buflisted: 1, bufloaded: 1})
+  var lista = []
+  for bufer in bufers
+    var text = bufer['bufnr']  .. "    line " .. bufer['lnum'] .. "    " .. bufer['name']
+    extend(lista, [text])
+  endfor
+  popup_menu(lista, { callback: (_, _) => '',  filter: s:filter_list})
+enddef
+
+nnoremap <silent> <space>l :call <SID>LIST()<CR>
+
+
 "------------TERMINAL----------------
 tmap <Esc> <C-\><C-n>
 
