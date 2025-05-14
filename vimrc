@@ -244,7 +244,10 @@ def s:filter_marks(id: number, key: string): bool
   const result = getcurpos(id)[1]
   const mark = split(getbufline(winbufnr(id), result)[0])[0]
   const filename = split(getbufline(winbufnr(id), result)[0])[-1]
-  if key == ''
+  if key =~ '[A-Z]'
+    execute("normal! `" .. key)
+    popup_close(id, 0)
+  elseif key == ''
     execute("normal! `" .. mark)
     popup_close(id, 0)
   elseif key == 'p'
