@@ -185,6 +185,115 @@ function! s:Descomentar_visual()
 endfunction
 
 
+function s:filter_list(id, key)
+  let result = getcurpos(a:id)[1]
+  let filename = split(getbufline(winbufnr(a:id), result)[0])[-1]
+  if a:key == ''
+    execute(':buffer ' .. filename)
+    call popup_close(a:id, 0)
+  elseif a:key == 'p'
+    execute(':buffer ' .. filename)
+  elseif a:key == 't'
+    execute(':tabnew ' .. filename)
+    call popup_close(a:id, 0)
+  elseif a:key == 's'
+    execute(':vsplit ' .. filename)
+    call popup_close(a:id, 0)
+  elseif a:key == 'd'
+    execute(':bdelete ' .. filename)
+    call deletebufline(winbufnr(a:id), result)
+  else 
+    return popup_filter_menu(a:id, a:key)
+  endif
+  return v:true
+endfunction
+
+function s:pad_to_width(text, width, side)
+  const pad = a:width - strwidth(a:text)
+  if pad <= 0 | return a:text | endif
+  if a:side == 'left'  | return repeat(' ', pad) .. a:text | endif
+  return a:text .. repeat(' ', pad) 
+endfunction
+
+function s:LIST()
+  let bufers = getbufinfo({'buflisted': 1, 'bufloaded': 1})
+  let lista = []
+  for bufer in bufers
+    const bufnr = s:pad_to_width(string(bufer['bufnr']), 3, 'right')
+    const line = s:pad_to_width(string(bufer['lnum']), 4, 'left')
+    const lines = s:pad_to_width(string(bufer['linecount']), 4, 'right')
+    const fname = bufer['name']
+    const short = s:pad_to_width(fnamemodify(fname, ":t"), 25, 'right')
+    const text = bufnr  .. "  "  ..  line .. "/" .. lines .. "   " .. short .. " "  .. fname
+    call extend(lista, [text])
+  endfor
+  let options = {
+    \'border': [1, 1, 1, 1],
+    \'highlight': 'Normal',
+    \'borderhighlight': ['LineNr'],
+    \'borderchars': ['─', '│', '─', '│', '┌', '┐', '┘', '└'], 
+    \'callback': { -> ''},
+    \'filter': 's:filter_list',
+  \}
+  call  popup_menu(lista, options)
+endfunction
+
+nnoremap <silent> <space>l :call <SID>LIST()<CR>
+
+function s:filter_marks(id, key)
+  let result = getcurpos(a:id)[1]
+  let mark = split(getbufline(winbufnr(a:id), result)[0])[0]
+  let filename = split(getbufline(winbufnr(a:id), result)[0])[-1]
+  if a:key =~ '[A-Z]'
+    execute("normal! `" .. a:key)
+    call popup_close(a:id, 0)
+  elseif a:key == ''
+    execute("normal! `" .. mark)
+    call popup_close(a:id, 0)
+  elseif a:key == 'p'
+    execute("normal! `" .. mark)
+  elseif a:key == 't'
+    execute(':tabnew ' .. filename)
+    execute("normal! `" .. mark)
+    call popup_close(a:id, 0)
+  elseif a:key == 's'
+    execute(':vsplit ' .. filename)
+    execute("normal! `" .. mark)
+    call popup_close(a:id, 0)
+  elseif a:key == 'd'
+    execute(':delmarks ' .. mark)
+    call deletebufline(winbufnr(a:id), result)
+  else
+    return popup_filter_menu(a:id, a:key)
+  endif
+  return v:true
+endfunction
+
+function s:MARKS()
+  let marks = getmarklist()
+  let lista = []
+  for mark in marks
+    if match(mark['mark'], "[0-9]") != -1 | continue | endif
+    let leter = mark['mark'][1]
+    let line = s:pad_to_width(string(mark['pos'][1]), 5, 'left')
+    let fname = mark['file']
+    let short = s:pad_to_width(fnamemodify(fname, ":t"), 25, 'right')
+    let text =  leter  .. "    " .. line  .. "    " .. short .. fname
+    call extend(lista, [text])
+  endfor
+  let options = {
+    \'border': [1, 1, 1, 1],
+    \'highlight': 'Normal',
+    \'borderhighlight': ['LineNr'],
+    \'borderchars': ['─', '│', '─', '│', '┌', '┐', '┘', '└'], 
+    \'callback': { -> "" },
+    \'filter': 's:filter_marks',
+  \}
+  call popup_menu(lista, options)
+endfunction
+
+nnoremap <silent> <space>m :call <SID>MARKS()<CR>
+
 "------------TERMINAL----------------
 tmap <Esc> <C-\><C-n>
 
